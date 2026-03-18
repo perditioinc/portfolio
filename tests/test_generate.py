@@ -1,0 +1,205 @@
+"""Tests for portfolio generate.py."""
+
+from __future__ import annotations
+
+import json
+
+import httpx
+import respx
+
+from generate import (
+    _build_row,
+    _extract_md_metrics,
+    _fetch_metrics_json,
+    _format_date,
+    _get_metrics,
+    _graphql_repos,
+    _load_projects_config,
+    _resolve_field,
+    build_readme,
+)
+from tests.conftest import make_gql_node
+
+GRAPHQL_URL = "https://api.github.com/graphql"
+RAW_BASE = "https://raw.githubusercontent.com"
+
+
+# ── _load_projects_config ─────────────────────────────────────────────────────
+
+
+def test_load_projects_config(tmp_path, monkeypatch):
+    """Loads projects.json correctly."""
+    cfg = {"myrepo": {"status": "active"}}
+    p = tmp_path / "projects.json"
+    p.write_text(json.dumps(cfg))
+    monkeypatch.chdir(tmp_path)
+    result = _load_projects_config()
+    assert result["myrepo"]["status"] == "active"
+
+
+def test_load_projects_config_missing(tmp_path, monkeypatch):
+    """Returns empty dict when projects.json is missing."""
+    monkeypatch.chdir(tmp_path)
+    result = _load_projects_config()
+    assert result == {}
+
+
+# ── _resolve_field ────────────────────────────────────────────────────────────
+
+
+def test_resolve_field_simple():
+    """Resolves a top-level key."""
+    assert _resolve_field({"total": 5}, "total") == 5
+
+
+def test_resolve_field_nested():
+    """Resolves a nested dotted path."""
+    assert _resolve_field({"meta": {"total": 805}}, "meta.total") == 805
+
+
+def test_resolve_field_missing():
+    """Returns None for missing paths."""
+    assert _resolve_field({}, "meta.total") is None
+
+
+# ── _extract_md_metrics ───────────────────────────────────────────────────────
+
+
+def test_extract_md_metrics_finds_field():
+    """Parses a metric line from markdown."""
+    text = "- duration_seconds: 68\n- repos_checked: 805"
+    result = _extract_md_metrics(text, ["duration_seconds", "repos_checked"])
+    assert result["duration_seconds"] == "68"
+    assert result["repos_checked"] == "805"
+
+
+def test_extract_md_metrics_missing_field():
+    """Returns empty dict when field is not present."""
+    result = _extract_md_metrics("no metrics here", ["duration_seconds"])
+    assert result == {}
+
+
+# ── _format_date ──────────────────────────────────────────────────────────────
+
+
+def test_format_date_iso():
+    """Formats ISO timestamp as YYYY-MM-DD."""
+    assert _format_date("2026-03-17T05:00:00Z") == "2026-03-17"
+
+
+def test_format_date_none():
+    """Returns '—' for None."""
+    assert _format_date(None) == "—"
+
+
+# ── _build_row ────────────────────────────────────────────────────────────────
+
+
+def test_build_row_contains_name():
+    """Row includes repo name as a link."""
+    node = make_gql_node("reporium", stars=100)
+    row = _build_row(node, {}, None)
+    assert "reporium" in row
+
+
+def test_build_row_contains_stars():
+    """Row includes star count."""
+    node = make_gql_node("reporium", stars=100)
+    row = _build_row(node, {}, None)
+    assert "100" in row
+
+
+def test_build_row_demo_link():
+    """Row includes demo link when config has 'demo'."""
+    node = make_gql_node("reporium")
+    row = _build_row(node, {"demo": "https://reporium.com"}, None)
+    assert "reporium.com" in row
+
+
+def test_build_row_metrics():
+    """Row includes metrics string when provided."""
+    node = make_gql_node("reporium")
+    row = _build_row(node, {}, "repos_tracked: 805")
+    assert "805" in row
+
+
+# ── build_readme ──────────────────────────────────────────────────────────────
+
+
+def test_build_readme_has_header():
+    """README contains the author header."""
+    readme = build_readme(["| row1 |"], "2026-03-17T05:00:00+00:00")
+    assert "Kim Loza" in readme
+
+
+def test_build_readme_has_table_headers():
+    """README contains the project table headers."""
+    readme = build_readme([], "2026-03-17")
+    assert "| Project |" in readme
+    assert "| Stars |" in readme
+
+
+def test_build_readme_contains_rows():
+    """README includes the provided rows."""
+    rows = ["| [myrepo](url) | desc | 5 | 2026-03-01 | — | — |"]
+    readme = build_readme(rows, "2026-03-17")
+    assert "myrepo" in readme
+
+
+# ── _graphql_repos (mocked) ───────────────────────────────────────────────────
+
+
+@respx.mock
+async def test_graphql_repos_returns_non_forks():
+    """Fetches repos and returns raw nodes (fork filtering is via GraphQL isFork param)."""
+    nodes = [make_gql_node("reporium"), make_gql_node("forksync")]
+    payload = {"data": {"user": {"repositories": {"nodes": nodes}}}}
+    respx.post(GRAPHQL_URL).mock(return_value=httpx.Response(200, json=payload))
+
+    result = await _graphql_repos("test-token", "testuser")
+    assert len(result) == 2
+
+
+# ── _fetch_metrics_json ───────────────────────────────────────────────────────
+
+
+@respx.mock
+async def test_fetch_metrics_json_success():
+    """Returns parsed dict on 200."""
+    url = f"{RAW_BASE}/perditioinc/reporium-db/main/data/index.json"
+    respx.get(url).mock(return_value=httpx.Response(200, json={"meta": {"total": 5}}))
+    result = await _fetch_metrics_json("tok", "perditioinc/reporium-db", "data/index.json")
+    assert result == {"meta": {"total": 5}}
+
+
+@respx.mock
+async def test_fetch_metrics_json_returns_none_on_error():
+    """Returns None when source is unavailable."""
+    url = f"{RAW_BASE}/perditioinc/reporium-db/main/data/index.json"
+    respx.get(url).mock(return_value=httpx.Response(404))
+    result = await _fetch_metrics_json("tok", "perditioinc/reporium-db", "data/index.json")
+    assert result is None
+
+
+# ── _get_metrics ─────────────────────────────────────────────────────────────
+
+
+@respx.mock
+async def test_get_metrics_json_source():
+    """Resolves dotted field paths and formats as label: value."""
+    url = f"{RAW_BASE}/perditioinc/reporium-db/main/data/index.json"
+    respx.get(url).mock(return_value=httpx.Response(200, json={"meta": {"total": 805}}))
+    cfg = {
+        "metrics_source": "perditioinc/reporium-db:data/index.json",
+        "metrics_fields": ["meta.total as repos_tracked"],
+    }
+    result = await _get_metrics("tok", cfg)
+    assert result is not None
+    assert "repos_tracked" in result
+    assert "805" in result
+
+
+async def test_get_metrics_no_source():
+    """Returns None when config has no metrics_source."""
+    result = await _get_metrics("tok", {})
+    assert result is None

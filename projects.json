@@ -1,0 +1,15 @@
+{
+  "reporium": {
+    "status": "active",
+    "demo": "https://reporium.com",
+    "metrics_source": "perditioinc/reporium-db:data/index.json",
+    "metrics_fields": ["meta.total as repos_tracked", "meta.last_updated"]
+  },
+  "forksync": {
+    "status": "active",
+    "metrics_source": "perditioinc/forksync:SYNC_REPORT.md",
+    "metrics_fields": ["duration_seconds", "repos_checked", "peak_concurrency"]
+  },
+  "reporium-api": {"status": "active"},
+  "reporium-ingestion": {"status": "active"}
+}
