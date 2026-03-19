@@ -1,7 +1,7 @@
 {
   "reporium": {
     "status": "active",
-    "demo": "https://reporium.com",
+    "link": "https://reporium.com",
     "metrics_source": "perditioinc/reporium-db:data/index.json",
     "metrics_fields": ["meta.total as repos_tracked", "meta.last_updated"]
   },

@@ -254,12 +254,12 @@ def _build_row(
     description = repo.get("description") or "—"
     stars = repo["stargazerCount"]
     last_commit = _format_date(repo.get("pushedAt"))
-    demo = config.get("demo", "")
-    demo_cell = f"[demo]({demo})" if demo else "—"
+    link = config.get("link", "")
+    link_cell = f"[link]({link})" if link else "—"
     metrics_cell = metrics_str or "—"
     repo_link = f"[{name}](https://github.com/{owner_name})"
     return (
-        f"| {repo_link} | {description} | {stars} | {last_commit} | {metrics_cell} | {demo_cell} |"
+        f"| {repo_link} | {description} | {stars} | {last_commit} | {metrics_cell} | {link_cell} |"
     )
 
 
@@ -276,11 +276,11 @@ def build_readme(rows: list[str], generated_at: str) -> str:
     table_body = "\n".join(rows)
     return f"""# Kim Loza — AI Product Manager
 
-> Personal project portfolio · Auto-updated nightly from live GitHub data.
+> Built by Kim Loza — AI Product Manager at Perditio · Auto-updated nightly from live GitHub data.
 
 ## Projects
 
-| Project | Description | Stars | Last Commit | Metrics | Demo |
+| Project | Description | Stars | Last Commit | Metrics | Link |
 |---------|-------------|-------|-------------|---------|------|
 {table_body}
 
@@ -321,11 +321,11 @@ async def main() -> None:
     generated_at = datetime.now(timezone.utc).isoformat()
     readme = build_readme(rows, generated_at)
 
-    with open("README.md", "w") as f:
+    with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme)
 
     elapsed = time.monotonic() - t0
-    logger.info("Portfolio README generated in %.2fs — %d projects", elapsed, len(rows))
+    logger.info("Portfolio README generated in %.2fs - %d projects", elapsed, len(rows))
 
 
 if __name__ == "__main__":

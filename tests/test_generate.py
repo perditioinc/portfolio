@@ -110,9 +110,9 @@ def test_build_row_contains_stars():
 
 
 def test_build_row_demo_link():
-    """Row includes demo link when config has 'demo'."""
+    """Row includes link when config has 'link'."""
     node = make_gql_node("reporium")
-    row = _build_row(node, {"demo": "https://reporium.com"}, None)
+    row = _build_row(node, {"link": "https://reporium.com"}, None)
     assert "reporium.com" in row
 
 
