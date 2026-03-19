@@ -6,7 +6,7 @@
 
 | Project | Description | Stars | Last Commit | Metrics | Link |
 |---------|-------------|-------|-------------|---------|------|
-| [forksync](https://github.com/perditioinc/forksync) | Tooling ⚙️: Keep your GitHub forks updated automatically. Runs nightly. | 1 | 2026-03-17 | — | — |
+| [forksync](https://github.com/perditioinc/forksync) | Tooling ⚙️: Keep your GitHub forks updated automatically. Runs nightly. | 1 | 2026-03-19 | — | — |
 | [reporium-ingestion](https://github.com/perditioinc/reporium-ingestion) | Local data ingestion and analysis scripts for Reporium : fetch, process, and generate embeddings for repositories, communicating with Reporium API. AI-native analysis, embeddings, scraping, tagging. Pushes updates to API. Standalone and private by default. | 1 | 2026-03-16 | — | — |
 | [reporium-api](https://github.com/perditioinc/reporium-api) | Backend API for Reporium : read/write access to repository database, designed for public queries and private ingestion updates. Gatekeeper API that talks to the database, handles authorized writes, serves data to clients/frontends. Public-facing, but writes are only authorized. | 1 | 2026-03-15 | — | — |
 | [reporium](https://github.com/perditioinc/reporium) | Your GitHub repos as a living AI-native knowledge graph library tool - an AI trend intelligence system that speaks to the people who need to understand what developers are building. Your curation, your lens, your industry perspective. Insights compounds, getting smarter every day. | 1 | 2026-03-18 | repos_tracked: 818 · updated: 2026-03-19T03:33:32.620823+00:00 | [link](https://reporium.com) |
@@ -57,4 +57,4 @@
 | [perditio-website](https://github.com/perditioinc/perditio-website) | — | 0 | 2024-10-13 | — | — |
 
 ---
-*Generated at 2026-03-19T04:29:32.831014+00:00 from live GitHub data.*
+*Generated at 2026-03-19T04:31:11.339539+00:00 from live GitHub data.*
