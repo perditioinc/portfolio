@@ -3,13 +3,17 @@
     "status": "active",
     "link": "https://reporium.com",
     "metrics_source": "perditioinc/reporium-db:data/index.json",
-    "metrics_fields": ["meta.total as repos_tracked", "meta.last_updated"]
+    "metrics_fields": ["meta.total as repos_tracked", "meta.last_updated as updated"]
   },
   "forksync": {
     "status": "active",
     "metrics_source": "perditioinc/forksync:SYNC_REPORT.md",
-    "metrics_fields": ["duration_seconds", "repos_checked", "peak_concurrency"]
+    "metrics_fields": ["duration_seconds", "repos_checked", "repos_synced"]
   },
-  "reporium-api": {"status": "active"},
-  "reporium-ingestion": {"status": "active"}
+  "reporium-api": {
+    "status": "active"
+  },
+  "reporium-ingestion": {
+    "status": "active"
+  }
 }

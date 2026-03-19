@@ -274,9 +274,9 @@ def build_readme(rows: list[str], generated_at: str) -> str:
         Complete README.md markdown string.
     """
     table_body = "\n".join(rows)
-    return f"""# Kim Loza — AI Product Manager
+    return f"""# Kim Loza — AI PM & Builder
 
-> Built by Kim Loza — AI Product Manager at Perditio · Auto-updated nightly from live GitHub data.
+> Auto-updated nightly from live GitHub data.
 
 ## Projects
 
