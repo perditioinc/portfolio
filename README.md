@@ -1,4 +1,4 @@
-# Kim Loza — AI PM & Builder
+# Kim Loza — AI Product Leader & Systems Builder
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/portfolio/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/test.yml)
 [![Nightly](https://github.com/perditioinc/portfolio/actions/workflows/update.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/update.yml)
@@ -28,4 +28,4 @@
 | [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 1 | 2026-03-20 | — | — |
 
 ---
-*Generated at 2026-03-20T19:00:44.572475+00:00 from live GitHub data.*
+*Generated at 2026-03-20T19:26:32.471958+00:00 from live GitHub data.*
