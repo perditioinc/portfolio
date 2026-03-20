@@ -11,9 +11,40 @@
     "metrics_fields": ["duration_seconds", "repos_checked", "repos_synced"]
   },
   "reporium-api": {
-    "status": "active"
+    "status": "active",
+    "link": "https://reporium-api-573778300586.us-central1.run.app/docs",
+    "metrics_source": "api:stats",
+    "metrics_fields": ["total_repos as repos_in_db", "languages as languages"]
+  },
+  "reporium-db": {
+    "status": "active",
+    "metrics_source": "perditioinc/reporium-db:data/index.json",
+    "metrics_fields": ["meta.total as repos_tracked", "languages as language_count"]
   },
   "reporium-ingestion": {
+    "status": "active"
+  },
+  "reporium-metrics": {
+    "status": "active",
+    "metrics_source": "perditioinc/reporium-metrics:metrics.json",
+    "metrics_fields": ["_last_date as latest_data"]
+  },
+  "reporium-audit": {
+    "status": "active"
+  },
+  "reporium-events": {
+    "status": "active"
+  },
+  "repo-intelligence": {
+    "status": "active"
+  },
+  "perditio-devkit": {
+    "status": "active"
+  },
+  "reporium-roadmap": {
+    "status": "active"
+  },
+  "reporium-dataset": {
     "status": "active"
   }
 }
