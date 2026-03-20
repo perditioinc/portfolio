@@ -276,6 +276,8 @@ def build_readme(rows: list[str], generated_at: str) -> str:
     table_body = "\n".join(rows)
     return f"""# Kim Loza — AI PM & Builder
 
+[![Nightly](https://github.com/perditioinc/portfolio/actions/workflows/update.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/update.yml)
+
 > Auto-updated nightly from live GitHub data.
 
 ## Projects
