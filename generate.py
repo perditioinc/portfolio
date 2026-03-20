@@ -325,7 +325,7 @@ def build_readme(rows: list[str], generated_at: str) -> str:
         Complete README.md markdown string.
     """
     table_body = "\n".join(rows)
-    return f"""# Kim Loza — AI PM & Builder
+    return f"""# Kim Loza — AI Product Leader & Systems Builder
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/portfolio/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/test.yml)
 [![Nightly](https://github.com/perditioinc/portfolio/actions/workflows/update.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/update.yml)
