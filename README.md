@@ -26,6 +26,8 @@
 | [reporium-api](https://github.com/perditioinc/reporium-api) | Backend API for Reporium : read/write access to repository database, designed for public queries and private ingestion updates. Gatekeeper API that talks to the database, handles authorized writes, serves data to clients/frontends. Public-facing, but writes are only authorized. | 1 | 2026-03-20 | repos_in_db: 826 · languages: 29 | [link](https://reporium-api-573778300586.us-central1.run.app/docs) |
 | [reporium](https://github.com/perditioinc/reporium) | Your GitHub repos as a living AI-native knowledge graph library tool - an AI trend intelligence system that speaks to the people who need to understand what developers are building. Your curation, your lens, your industry perspective. Insights compounds, getting smarter every day. | 1 | 2026-03-20 | repos_tracked: 826 · updated: 2026-03-20T07:09:18.337868+00:00 | [link](https://reporium.com) |
 | [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 1 | 2026-03-20 | — | — |
+| [reporium-security](https://github.com/perditioinc/reporium-security) | — | 0 | 2026-03-20 | — | — |
+| [reporium-system-design](https://github.com/perditioinc/reporium-system-design) | — | 0 | 2026-03-20 | — | — |
 
 ---
-*Generated at 2026-03-20T19:26:32.471958+00:00 from live GitHub data.*
+*Generated at 2026-03-20T20:18:02.997893+00:00 from live GitHub data.*
