@@ -278,11 +278,8 @@ def build_readme(rows: list[str], generated_at: str) -> str:
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/portfolio/actions/workflows/update.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/update.yml)
 ![Last Commit](https://img.shields.io/github/last-commit/perditioinc/portfolio)
-![License](https://img.shields.io/github/license/perditioinc/portfolio)
 ![python](https://img.shields.io/badge/python-3.11%2B-3776ab)
 ![suite](https://img.shields.io/badge/suite-Reporium-6e40c9)
-![public repos](https://img.shields.io/badge/public%20repos-30-blue)
-![updated](https://img.shields.io/badge/updated-nightly-blue)
 <!-- perditio-badges-end -->
 
 > Auto-updated nightly from live GitHub data.
