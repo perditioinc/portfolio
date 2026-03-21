@@ -87,10 +87,10 @@
     "order": 2,
     "status": "active"
   },
-  "repo-intelligence": {
-    "suite": "Perditio",
-    "group": "Shared Tooling",
-    "order": 3,
+  "reporium-scoring": {
+    "suite": "Reporium",
+    "group": "Observability & Health",
+    "order": 4,
     "status": "active"
   }
 }

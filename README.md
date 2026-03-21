@@ -40,6 +40,7 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 | [reporium-metrics](https://github.com/perditioinc/reporium-metrics) | Platform performance tracking over time — ASCII trend charts, nightly collection. | 1 | Python | Mar 20, 2026 |
 | [reporium-audit](https://github.com/perditioinc/reporium-audit) | Nightly automated audit of the entire Reporium platform — verified health checks | 1 | Python | Mar 20, 2026 |
 | [reporium-security](https://github.com/perditioinc/reporium-security) | Automated security scanning for the Reporium suite — grades every public repo A through F nightly | 1 | Python | Mar 20, 2026 |
+| [reporium-scoring](https://github.com/perditioinc/reporium-scoring) | Score any GitHub repo 0-100 for the Reporium platform — README quality, activity, community health, CI/CD | 1 | Python | Mar 21, 2026 |
 
 ### Documentation & Discovery
 
@@ -57,9 +58,8 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
-| [perditio-devkit](https://github.com/perditioinc/perditio-devkit) | Shared tooling for Perditio projects — badges, GitHub client, file utilities | 1 | Python | Mar 20, 2026 |
+| [perditio-devkit](https://github.com/perditioinc/perditio-devkit) | Shared tooling for Perditio projects — badges, GitHub client, file utilities | 1 | Python | Mar 21, 2026 |
 | [reporium-events](https://github.com/perditioinc/reporium-events) | Event schema definitions and Python publisher client for Reporium platform — GCP Pub/Sub | 1 | Python | Mar 20, 2026 |
-| [repo-intelligence](https://github.com/perditioinc/repo-intelligence) | Score any GitHub repo 0-100 — README, activity, community, CI. Pip-installable. | 1 | Python | Mar 20, 2026 |
 
 ## Other Projects
 
@@ -71,4 +71,4 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 ---
 *Last Updated reflects the most recent push including automated nightly workflow runs.*
-*Generated at Mar 21, 2026 01:07 UTC from live GitHub data.*
+*Generated at Mar 21, 2026 01:21 UTC from live GitHub data.*
