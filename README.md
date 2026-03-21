@@ -22,10 +22,10 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated | Metrics | Link |
 |------|------|------|------|------|------|------|
-| [reporium](https://github.com/perditioinc/reporium) | Your GitHub repos as a living AI-native knowledge graph library tool - an AI trend intelligence system that speaks to the people who need to understand what developers are building. Your curation, your lens, your industry perspective. Insights compounds, getting smarter every day. | 1 | TypeScript | Mar 20, 2026 | repos_tracked: 826 | [link](https://reporium.com) |
+| [reporium](https://github.com/perditioinc/reporium) | Your GitHub repos as a living AI-native knowledge graph library tool - an AI trend intelligence system that speaks to the people who need to understand what developers are building. Your curation, your lens, your industry perspective. Insights compounds, getting smarter every day. | 1 | TypeScript | Mar 21, 2026 | repos_tracked: 831 | [link](https://reporium.com) |
 | [reporium-api](https://github.com/perditioinc/reporium-api) | Backend API for Reporium : read/write access to repository database, designed for public queries and private ingestion updates. Gatekeeper API that talks to the database, handles authorized writes, serves data to clients/frontends. Public-facing, but writes are only authorized. | 1 | Python | Mar 21, 2026 | repos_in_db: 826 | [link](https://reporium-api-573778300586.us-central1.run.app/docs) |
-| [reporium-db](https://github.com/perditioinc/reporium-db) | Nightly GitHub metadata sync — powers reporium.com. Supports 100K repos via GraphQL tiers, checkpointing, and partitioned output. | 1 | Python | Mar 21, 2026 | repos_tracked: 826 | — |
-| [reporium-ingestion](https://github.com/perditioinc/reporium-ingestion) | Local data ingestion and analysis scripts for Reporium : fetch, process, and generate embeddings for repositories, communicating with Reporium API. AI-native analysis, embeddings, scraping, tagging. Pushes updates to API. Standalone and private by default. | 1 | Python | Mar 19, 2026 | — | — |
+| [reporium-db](https://github.com/perditioinc/reporium-db) | Nightly GitHub metadata sync — powers reporium.com. Supports 100K repos via GraphQL tiers, checkpointing, and partitioned output. | 1 | Python | Mar 21, 2026 | repos_tracked: 831 | — |
+| [reporium-ingestion](https://github.com/perditioinc/reporium-ingestion) | Local data ingestion and analysis scripts for Reporium : fetch, process, and generate embeddings for repositories, communicating with Reporium API. AI-native analysis, embeddings, scraping, tagging. Pushes updates to API. Standalone and private by default. | 1 | Python | Mar 21, 2026 | — | — |
 
 ### Automation & Sync
 
@@ -76,4 +76,4 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 ---
 *Last Updated reflects the most recent push including automated nightly workflow runs.*
-*Generated at Mar 21, 2026 01:39 UTC from live GitHub data.*
+*Generated at Mar 21, 2026 07:09 UTC from live GitHub data.*
