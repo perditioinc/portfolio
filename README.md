@@ -23,11 +23,12 @@
 | [reporium-db](https://github.com/perditioinc/reporium-db) | Nightly GitHub metadata sync — powers reporium.com. Supports 100K repos via GraphQL tiers, checkpointing, and partitioned output. | 1 | 2026-03-20 | repos_tracked: 826 · language_count: 29 | — |
 | [forksync](https://github.com/perditioinc/forksync) | Tooling ⚙️: Keep your GitHub forks updated automatically. Runs nightly. | 1 | 2026-03-20 | duration_seconds: 143 · repos_checked: 792 · repos_synced: 0 | — |
 | [reporium-ingestion](https://github.com/perditioinc/reporium-ingestion) | Local data ingestion and analysis scripts for Reporium : fetch, process, and generate embeddings for repositories, communicating with Reporium API. AI-native analysis, embeddings, scraping, tagging. Pushes updates to API. Standalone and private by default. | 1 | 2026-03-19 | — | — |
-| [reporium-api](https://github.com/perditioinc/reporium-api) | Backend API for Reporium : read/write access to repository database, designed for public queries and private ingestion updates. Gatekeeper API that talks to the database, handles authorized writes, serves data to clients/frontends. Public-facing, but writes are only authorized. | 1 | 2026-03-20 | repos_in_db: 826 · languages: 29 | [link](https://reporium-api-573778300586.us-central1.run.app/docs) |
+| [reporium-api](https://github.com/perditioinc/reporium-api) | Backend API for Reporium : read/write access to repository database, designed for public queries and private ingestion updates. Gatekeeper API that talks to the database, handles authorized writes, serves data to clients/frontends. Public-facing, but writes are only authorized. | 1 | 2026-03-21 | repos_in_db: 826 · languages: 29 | [link](https://reporium-api-573778300586.us-central1.run.app/docs) |
 | [reporium](https://github.com/perditioinc/reporium) | Your GitHub repos as a living AI-native knowledge graph library tool - an AI trend intelligence system that speaks to the people who need to understand what developers are building. Your curation, your lens, your industry perspective. Insights compounds, getting smarter every day. | 1 | 2026-03-20 | repos_tracked: 826 · updated: 2026-03-20T07:09:18.337868+00:00 | [link](https://reporium.com) |
+| [reporium-security](https://github.com/perditioinc/reporium-security) | Automated security scanning for the Reporium suite — grades every public repo A through F nightly | 1 | 2026-03-20 | — | — |
+| [reporium-system-design](https://github.com/perditioinc/reporium-system-design) | Architecture decisions, tradeoffs, CAP theorem analysis, and diagrams for the Reporium platform | 1 | 2026-03-21 | — | — |
 | [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 1 | 2026-03-20 | — | — |
-| [reporium-security](https://github.com/perditioinc/reporium-security) | — | 0 | 2026-03-20 | — | — |
-| [reporium-system-design](https://github.com/perditioinc/reporium-system-design) | — | 0 | 2026-03-20 | — | — |
+| [reporium-trending](https://github.com/perditioinc/reporium-trending) | Nightly AI repo discovery — finds trending AI development tools on GitHub and feeds reporium-db | 0 | 2026-03-21 | — | — |
 
 ---
-*Generated at 2026-03-20T20:18:02.997893+00:00 from live GitHub data.*
+*Generated at 2026-03-21T00:34:31.657439+00:00 from live GitHub data.*
