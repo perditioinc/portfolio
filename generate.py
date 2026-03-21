@@ -399,7 +399,6 @@ async def main() -> None:
         group = cfg.get("group")
 
         if suite and group:
-            order = cfg.get("order", 99)
             suite_groups[suite][group].append((repo, cfg, metrics_str))
         else:
             other_repos.append((repo, cfg, metrics_str))
