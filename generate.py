@@ -1,4 +1,4 @@
-"""Generate portfolio README.md from live GitHub data."""
+"""Generate portfolio README.md from live GitHub data — grouped by suite."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import time
+from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Any, Optional
 
@@ -22,7 +23,10 @@ logger = logging.getLogger(__name__)
 
 GITHUB_GRAPHQL = "https://api.github.com/graphql"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com"
-REPORIUM_API_URL = "https://reporium-api-573778300586.us-central1.run.app"
+REPORIUM_API_URL = os.getenv(
+    "REPORIUM_API_URL",
+    "https://reporium-api-573778300586.us-central1.run.app",
+)
 TIMEOUT = 15
 
 REPO_QUERY = """
@@ -38,7 +42,7 @@ query($login: String!) {
         nameWithOwner name description
         stargazerCount forkCount
         primaryLanguage { name }
-        pushedAt
+        pushedAt isPrivate
         issues(states: [OPEN]) { totalCount }
         repositoryTopics(first: 5) { nodes { topic { name } } }
       }
@@ -47,16 +51,33 @@ query($login: String!) {
 }
 """
 
+# Suite definitions — order matters for README section ordering
+SUITE_ORDER = ["Reporium", "Perditio"]
+
+# Group ordering within each suite
+GROUP_ORDER = {
+    "Reporium": [
+        "Core Platform",
+        "Automation & Sync",
+        "Observability & Health",
+        "Documentation & Discovery",
+    ],
+    "Perditio": ["Shared Tooling"],
+}
+
+SUITE_DESCRIPTIONS = {
+    "Reporium": (
+        "A platform for discovering, tracking, and understanding AI development "
+        "tools on GitHub.\n"
+        "> [reporium.com](https://reporium.com) · "
+        "[API Docs](https://reporium-api-573778300586.us-central1.run.app/docs)"
+    ),
+    "Perditio": "Shared tooling and infrastructure for Perditio projects.",
+}
+
 
 def _load_projects_config(path: str = "projects.json") -> dict[str, dict]:
-    """Load override config from projects.json.
-
-    Args:
-        path: Path to the projects.json file.
-
-    Returns:
-        Mapping of repo name → config dict.
-    """
+    """Load project config from projects.json."""
     try:
         return json.loads(open(path).read())
     except Exception as exc:  # noqa: BLE001
@@ -65,15 +86,7 @@ def _load_projects_config(path: str = "projects.json") -> dict[str, dict]:
 
 
 async def _graphql_repos(token: str, username: str) -> list[dict[str, Any]]:
-    """Fetch non-fork repos for a user via GraphQL.
-
-    Args:
-        token: GitHub personal access token.
-        username: GitHub username or org.
-
-    Returns:
-        List of raw GraphQL repo node dicts.
-    """
+    """Fetch non-fork repos via GraphQL."""
     headers = {"Authorization": f"bearer {token}", "Content-Type": "application/json"}
     async with httpx.AsyncClient(timeout=TIMEOUT) as client:
         resp = await client.post(
@@ -86,17 +99,19 @@ async def _graphql_repos(token: str, username: str) -> list[dict[str, Any]]:
     return data["data"]["user"]["repositories"]["nodes"]
 
 
+def _resolve_field(data: dict, dotted_path: str) -> Any:
+    """Resolve a dotted field path from a nested dict."""
+    parts = dotted_path.split(".")
+    current: Any = data
+    for part in parts:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(part)
+    return current
+
+
 async def _fetch_metrics_json(token: str, owner_repo: str, file_path: str) -> Optional[dict]:
-    """Fetch a JSON metrics file from a GitHub repo via raw URL.
-
-    Args:
-        token: GitHub personal access token.
-        owner_repo: e.g. 'perditioinc/reporium-db'.
-        file_path: e.g. 'data/index.json'.
-
-    Returns:
-        Parsed dict or None on failure.
-    """
+    """Fetch a JSON file from a GitHub repo."""
     url = f"{GITHUB_RAW_BASE}/{owner_repo}/main/{file_path}"
     headers = {"Authorization": f"Bearer {token}"}
     try:
@@ -110,16 +125,7 @@ async def _fetch_metrics_json(token: str, owner_repo: str, file_path: str) -> Op
 
 
 async def _fetch_metrics_md(token: str, owner_repo: str, file_path: str) -> Optional[str]:
-    """Fetch a markdown metrics file from a GitHub repo via raw URL.
-
-    Args:
-        token: GitHub personal access token.
-        owner_repo: e.g. 'perditioinc/forksync'.
-        file_path: e.g. 'SYNC_REPORT.md'.
-
-    Returns:
-        Raw text or None on failure.
-    """
+    """Fetch a markdown file from a GitHub repo."""
     url = f"{GITHUB_RAW_BASE}/{owner_repo}/main/{file_path}"
     headers = {"Authorization": f"Bearer {token}"}
     try:
@@ -132,38 +138,10 @@ async def _fetch_metrics_md(token: str, owner_repo: str, file_path: str) -> Opti
         return None
 
 
-def _resolve_field(data: dict, dotted_path: str) -> Any:
-    """Resolve a dotted field path from a nested dict.
-
-    Args:
-        data: The source dict.
-        dotted_path: e.g. 'meta.total'.
-
-    Returns:
-        The resolved value or None.
-    """
-    parts = dotted_path.split(".")
-    current: Any = data
-    for part in parts:
-        if not isinstance(current, dict):
-            return None
-        current = current.get(part)
-    return current
-
-
 def _extract_md_metrics(text: str, fields: list[str]) -> dict[str, Any]:
-    """Parse metric values from markdown using regex.
-
-    Args:
-        text: Raw markdown content.
-        fields: List of field names to extract (e.g. ['duration_seconds']).
-
-    Returns:
-        Mapping of field name → extracted value (str).
-    """
+    """Parse metric values from markdown using regex."""
     result: dict[str, Any] = {}
     for field in fields:
-        # Match "- field_name: value" where underscores can be spaces or underscores
         field_pattern = "[_ ]".join(re.escape(p) for p in field.split("_"))
         pattern = rf"-\s*{field_pattern}[:\s]+([^\n]+)"
         match = re.search(pattern, text, re.IGNORECASE)
@@ -173,15 +151,7 @@ def _extract_md_metrics(text: str, fields: list[str]) -> dict[str, Any]:
 
 
 async def _fetch_api_metrics(endpoint: str, fields: list[str]) -> Optional[str]:
-    """Fetch metrics from the live reporium-api.
-
-    Args:
-        endpoint: API endpoint path e.g. 'stats'.
-        fields: List of "field as label" or plain field names.
-
-    Returns:
-        Formatted metrics string or None on failure.
-    """
+    """Fetch metrics from the live reporium-api."""
     url = f"{REPORIUM_API_URL}/{endpoint}"
     try:
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
@@ -202,7 +172,6 @@ async def _fetch_api_metrics(endpoint: str, fields: list[str]) -> Optional[str]:
             label = field_def
         val = data.get(path.strip())
         if val is not None:
-            # Count dict keys for language_count-style fields
             if isinstance(val, dict):
                 val = len(val)
             metric_parts.append(f"{label}: {val}")
@@ -210,26 +179,16 @@ async def _fetch_api_metrics(endpoint: str, fields: list[str]) -> Optional[str]:
 
 
 async def _get_metrics(token: str, config: dict) -> Optional[str]:
-    """Fetch and format metrics for a project from its metrics_source.
-
-    Args:
-        token: GitHub PAT.
-        config: Project config dict (may have metrics_source and metrics_fields).
-
-    Returns:
-        Formatted metrics string or None.
-    """
+    """Fetch and format metrics for a project from its metrics_source."""
     source = config.get("metrics_source", "")
     fields = config.get("metrics_fields", [])
     if not source or not fields:
         return None
 
-    # Handle API-based metrics source: "api:endpoint"
     if source.startswith("api:"):
         endpoint = source.split(":", 1)[1]
         return await _fetch_api_metrics(endpoint, fields)
 
-    # Parse "owner/repo:path/to/file"
     parts = source.split(":", 1)
     if len(parts) != 2:
         return None
@@ -239,14 +198,12 @@ async def _get_metrics(token: str, config: dict) -> Optional[str]:
         data = await _fetch_metrics_json(token, owner_repo, file_path)
         if data is None:
             return None
-        # If data is a list (e.g. metrics.json), use last entry
         if isinstance(data, list):
             if not data:
                 return None
             data = {"_last_date": data[-1].get("date", "—"), "_entries": len(data)}
         metric_parts = []
         for field_def in fields:
-            # Support "field.path as label" syntax
             if " as " in field_def:
                 path, label = field_def.split(" as ", 1)
                 label = label.strip()
@@ -255,7 +212,6 @@ async def _get_metrics(token: str, config: dict) -> Optional[str]:
                 label = field_def.split(".")[-1]
             val = _resolve_field(data, path.strip())
             if val is not None:
-                # Count dict keys for dict-type fields (e.g. languages)
                 if isinstance(val, dict):
                     val = len(val)
                 metric_parts.append(f"{label}: {val}")
@@ -271,18 +227,24 @@ async def _get_metrics(token: str, config: dict) -> Optional[str]:
     return None
 
 
-def _format_date(iso: Optional[str]) -> str:
-    """Format an ISO date as a short human-readable date.
+def format_last_updated(pushed_at: str) -> str:
+    """Format pushed_at date from GitHub API.
 
-    Args:
-        iso: ISO-8601 timestamp string or None.
-
-    Returns:
-        e.g. '2026-03-17' or '—'.
+    Returns date in unambiguous format: 'Mar 20, 2026'.
+    Never returns a date in the future — if pushed_at is after today UTC,
+    something is wrong, log a warning and return 'recently'.
     """
-    if not iso:
+    if not pushed_at:
         return "—"
-    return iso[:10]
+    try:
+        dt = datetime.fromisoformat(pushed_at.replace("Z", "+00:00"))
+        today = datetime.now(timezone.utc)
+        if dt > today:
+            logger.warning("pushed_at %s is in the future — using 'recently'", pushed_at)
+            return "recently"
+        return dt.strftime("%b %d, %Y")
+    except Exception:  # noqa: BLE001
+        return "unknown"
 
 
 def _build_row(
@@ -290,42 +252,70 @@ def _build_row(
     config: dict,
     metrics_str: Optional[str],
 ) -> str:
-    """Build a single markdown table row for a project.
-
-    Args:
-        repo: Raw GraphQL repo node.
-        config: Project config from projects.json.
-        metrics_str: Optional formatted metrics string.
-
-    Returns:
-        Markdown table row string.
-    """
+    """Build a single markdown table row for a project."""
     name = repo["name"]
     owner_name = repo["nameWithOwner"]
     description = repo.get("description") or "—"
     stars = repo["stargazerCount"]
-    last_commit = _format_date(repo.get("pushedAt"))
+    language = (repo.get("primaryLanguage") or {}).get("name", "—")
+    last_updated = format_last_updated(repo.get("pushedAt", ""))
     link = config.get("link", "")
-    link_cell = f"[link]({link})" if link else "—"
-    metrics_cell = metrics_str or "—"
     repo_link = f"[{name}](https://github.com/{owner_name})"
-    return (
-        f"| {repo_link} | {description} | {stars} | {last_commit} | {metrics_cell} | {link_cell} |"
-    )
+
+    if link and metrics_str:
+        link_cell = f"[link]({link})"
+        return f"| {repo_link} | {description} | {stars} | {language} | {last_updated} | {metrics_str} | {link_cell} |"
+    if link:
+        link_cell = f"[link]({link})"
+        return f"| {repo_link} | {description} | {stars} | {language} | {last_updated} | {link_cell} |"
+    if metrics_str:
+        return f"| {repo_link} | {description} | {stars} | {language} | {last_updated} | {metrics_str} |"
+    return f"| {repo_link} | {description} | {stars} | {language} | {last_updated} |"
 
 
-def build_readme(rows: list[str], generated_at: str) -> str:
-    """Assemble the full README from project rows.
+def _build_group_table(repos_with_config: list[tuple[dict, dict, Optional[str]]], has_metrics: bool, has_link: bool) -> str:
+    """Build a markdown table for a group of repos."""
+    header_cols = ["Repo", "Description", "Stars", "Language", "Last Updated"]
+    if has_metrics:
+        header_cols.append("Metrics")
+    if has_link:
+        header_cols.append("Link")
 
-    Args:
-        rows: List of markdown table row strings.
-        generated_at: ISO-8601 timestamp of generation.
+    header = "| " + " | ".join(header_cols) + " |"
+    sep = "|" + "|".join(["------" for _ in header_cols]) + "|"
 
-    Returns:
-        Complete README.md markdown string.
-    """
-    table_body = "\n".join(rows)
-    return f"""# Kim Loza — AI Product Leader & Systems Builder
+    rows = [header, sep]
+    for repo, cfg, metrics_str in repos_with_config:
+        name = repo["name"]
+        owner_name = repo["nameWithOwner"]
+        description = repo.get("description") or "—"
+        stars = repo["stargazerCount"]
+        language = (repo.get("primaryLanguage") or {}).get("name", "—")
+        last_updated = format_last_updated(repo.get("pushedAt", ""))
+        repo_link = f"[{name}](https://github.com/{owner_name})"
+
+        cells = [repo_link, description, str(stars), language, last_updated]
+        if has_metrics:
+            cells.append(metrics_str or "—")
+        if has_link:
+            link = cfg.get("link", "")
+            cells.append(f"[link]({link})" if link else "—")
+        rows.append("| " + " | ".join(cells) + " |")
+
+    return "\n".join(rows)
+
+
+def build_readme(
+    suite_groups: dict[str, dict[str, list[tuple[dict, dict, Optional[str]]]]],
+    other_repos: list[tuple[dict, dict, Optional[str]]],
+    generated_at: str,
+) -> str:
+    """Assemble the full README grouped by suite and group."""
+    sections: list[str] = []
+
+    # Bio header
+    sections.append("""# Kim Loza — AI Product Leader & Systems Builder
+
 <!-- perditio-badges-start -->
 [![Tests](https://github.com/perditioinc/portfolio/actions/workflows/test.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/test.yml)
 [![Nightly](https://github.com/perditioinc/portfolio/actions/workflows/update.yml/badge.svg)](https://github.com/perditioinc/portfolio/actions/workflows/update.yml)
@@ -334,17 +324,47 @@ def build_readme(rows: list[str], generated_at: str) -> str:
 ![suite](https://img.shields.io/badge/suite-Kim%20Loza-0ea5e9)
 <!-- perditio-badges-end -->
 
-> Auto-updated nightly from live GitHub data.
+AI Product Manager building at the intersection of developer tooling, AI infrastructure, and open source.
+Currently building the Reporium platform — a discovery and intelligence layer for AI development tools on GitHub.
 
-## Projects
+[GitHub](https://github.com/perditioinc)""")
+    # TODO: add real LinkedIn URL when confirmed — omit from output until then
 
-| Project | Description | Stars | Last Commit | Metrics | Link |
-|---------|-------------|-------|-------------|---------|------|
-{table_body}
+    # Suite sections
+    for suite_name in SUITE_ORDER:
+        groups = suite_groups.get(suite_name, {})
+        if not groups:
+            continue
 
+        desc = SUITE_DESCRIPTIONS.get(suite_name, "")
+        sections.append(f"\n## {suite_name} Suite\n\n> {desc}")
+
+        group_names = GROUP_ORDER.get(suite_name, list(groups.keys()))
+        for group_name in group_names:
+            repos_in_group = groups.get(group_name, [])
+            if not repos_in_group:
+                continue
+
+            # Determine if this group needs metrics or link columns
+            has_metrics = any(m is not None for _, _, m in repos_in_group)
+            has_link = any(c.get("link") for _, c, _ in repos_in_group)
+
+            sections.append(f"\n### {group_name}\n")
+            sections.append(_build_group_table(repos_in_group, has_metrics, has_link))
+
+    # Other projects section
+    if other_repos:
+        sections.append("\n## Other Projects\n\n> Public repos not part of a suite.\n")
+        has_metrics = any(m is not None for _, _, m in other_repos)
+        sections.append(_build_group_table(other_repos, has_metrics, False))
+
+    # Footer
+    sections.append(f"""
 ---
-*Generated at {generated_at} from live GitHub data.*
-"""
+*Last Updated reflects the most recent push including automated nightly workflow runs.*
+*Generated at {generated_at} from live GitHub data.*""")
+
+    return "\n".join(sections) + "\n"
 
 
 async def main() -> None:
@@ -361,29 +381,52 @@ async def main() -> None:
     config_map = _load_projects_config()
     nodes = await _graphql_repos(token, username)
 
-    # Sort: active repos first (per projects.json), then by stars
-    def _sort_key(n: dict) -> tuple[int, int]:
-        cfg = config_map.get(n["name"], {})
-        is_active = 0 if cfg.get("status") == "active" else 1
-        return (is_active, -n["stargazerCount"])
+    # Filter out private repos (GraphQL shouldn't return them but guard anyway)
+    nodes = [n for n in nodes if not n.get("isPrivate")]
 
-    nodes.sort(key=_sort_key)
+    # Build grouped structure: suite → group → list of (repo, config, metrics)
+    suite_groups: dict[str, dict[str, list[tuple[dict, dict, Optional[str]]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    other_repos: list[tuple[dict, dict, Optional[str]]] = []
 
-    rows: list[str] = []
     for repo in nodes:
         name = repo["name"]
         cfg = config_map.get(name, {})
-        metrics_str = await _get_metrics(token, cfg) if cfg else None
-        rows.append(_build_row(repo, cfg, metrics_str))
+        metrics_str = await _get_metrics(token, cfg) if cfg.get("metrics_source") else None
 
-    generated_at = datetime.now(timezone.utc).isoformat()
-    readme = build_readme(rows, generated_at)
+        suite = cfg.get("suite")
+        group = cfg.get("group")
+
+        if suite and group:
+            order = cfg.get("order", 99)
+            suite_groups[suite][group].append((repo, cfg, metrics_str))
+        else:
+            other_repos.append((repo, cfg, metrics_str))
+
+    # Sort repos within each group by their order field
+    for suite_name in suite_groups:
+        for group_name in suite_groups[suite_name]:
+            suite_groups[suite_name][group_name].sort(
+                key=lambda item: item[1].get("order", 99)
+            )
+
+    # Sort other repos by stars descending
+    other_repos.sort(key=lambda item: -item[0]["stargazerCount"])
+
+    generated_at = datetime.now(timezone.utc).strftime("%b %d, %Y %H:%M UTC")
+    readme = build_readme(dict(suite_groups), other_repos, generated_at)
 
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme)
 
     elapsed = time.monotonic() - t0
-    logger.info("Portfolio README generated in %.2fs - %d projects", elapsed, len(rows))
+    total_repos = sum(
+        len(repos)
+        for groups in suite_groups.values()
+        for repos in groups.values()
+    ) + len(other_repos)
+    logger.info("Portfolio README generated in %.2fs - %d projects", elapsed, total_repos)
 
 
 if __name__ == "__main__":

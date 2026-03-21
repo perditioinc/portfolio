@@ -1,50 +1,96 @@
 {
   "reporium": {
+    "suite": "Reporium",
+    "group": "Core Platform",
+    "order": 1,
     "status": "active",
     "link": "https://reporium.com",
     "metrics_source": "perditioinc/reporium-db:data/index.json",
-    "metrics_fields": ["meta.total as repos_tracked", "meta.last_updated as updated"]
-  },
-  "forksync": {
-    "status": "active",
-    "metrics_source": "perditioinc/forksync:SYNC_REPORT.md",
-    "metrics_fields": ["duration_seconds", "repos_checked", "repos_synced"]
+    "metrics_fields": ["meta.total as repos_tracked"]
   },
   "reporium-api": {
+    "suite": "Reporium",
+    "group": "Core Platform",
+    "order": 2,
     "status": "active",
     "link": "https://reporium-api-573778300586.us-central1.run.app/docs",
     "metrics_source": "api:stats",
-    "metrics_fields": ["total_repos as repos_in_db", "languages as languages"]
+    "metrics_fields": ["total_repos as repos_in_db"]
   },
   "reporium-db": {
+    "suite": "Reporium",
+    "group": "Core Platform",
+    "order": 3,
     "status": "active",
     "metrics_source": "perditioinc/reporium-db:data/index.json",
-    "metrics_fields": ["meta.total as repos_tracked", "languages as language_count"]
+    "metrics_fields": ["meta.total as repos_tracked"]
   },
   "reporium-ingestion": {
-    "status": "active"
+    "suite": "Reporium",
+    "group": "Core Platform",
+    "order": 4,
+    "status": "in_progress"
+  },
+  "forksync": {
+    "suite": "Reporium",
+    "group": "Automation & Sync",
+    "order": 1,
+    "status": "active",
+    "metrics_source": "perditioinc/forksync:SYNC_REPORT.md",
+    "metrics_fields": ["duration_seconds", "repos_checked"]
   },
   "reporium-metrics": {
-    "status": "active",
-    "metrics_source": "perditioinc/reporium-metrics:metrics.json",
-    "metrics_fields": ["_last_date as latest_data"]
+    "suite": "Reporium",
+    "group": "Observability & Health",
+    "order": 1,
+    "status": "active"
   },
   "reporium-audit": {
+    "suite": "Reporium",
+    "group": "Observability & Health",
+    "order": 2,
     "status": "active"
   },
-  "reporium-events": {
-    "status": "active"
-  },
-  "repo-intelligence": {
-    "status": "active"
-  },
-  "perditio-devkit": {
-    "status": "active"
-  },
-  "reporium-roadmap": {
+  "reporium-security": {
+    "suite": "Reporium",
+    "group": "Observability & Health",
+    "order": 3,
     "status": "active"
   },
   "reporium-dataset": {
+    "suite": "Reporium",
+    "group": "Documentation & Discovery",
+    "order": 1,
+    "status": "active"
+  },
+  "reporium-roadmap": {
+    "suite": "Reporium",
+    "group": "Documentation & Discovery",
+    "order": 2,
+    "status": "active"
+  },
+  "reporium-system-design": {
+    "suite": "Reporium",
+    "group": "Documentation & Discovery",
+    "order": 3,
+    "status": "active"
+  },
+  "perditio-devkit": {
+    "suite": "Perditio",
+    "group": "Shared Tooling",
+    "order": 1,
+    "status": "active"
+  },
+  "reporium-events": {
+    "suite": "Perditio",
+    "group": "Shared Tooling",
+    "order": 2,
+    "status": "active"
+  },
+  "repo-intelligence": {
+    "suite": "Perditio",
+    "group": "Shared Tooling",
+    "order": 3,
     "status": "active"
   }
 }

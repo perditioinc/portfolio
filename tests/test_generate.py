@@ -8,15 +8,14 @@ import httpx
 import respx
 
 from generate import (
-    _build_row,
     _extract_md_metrics,
     _fetch_metrics_json,
-    _format_date,
     _get_metrics,
     _graphql_repos,
     _load_projects_config,
     _resolve_field,
     build_readme,
+    format_last_updated,
 )
 from tests.conftest import make_gql_node
 
@@ -79,48 +78,25 @@ def test_extract_md_metrics_missing_field():
     assert result == {}
 
 
-# ── _format_date ──────────────────────────────────────────────────────────────
+# ── format_last_updated ──────────────────────────────────────────────────────
 
 
-def test_format_date_iso():
-    """Formats ISO timestamp as YYYY-MM-DD."""
-    assert _format_date("2026-03-17T05:00:00Z") == "2026-03-17"
+def test_format_last_updated_iso():
+    """Formats ISO timestamp as unambiguous date."""
+    result = format_last_updated("2026-03-17T05:00:00Z")
+    assert result == "Mar 17, 2026"
 
 
-def test_format_date_none():
-    """Returns '—' for None."""
-    assert _format_date(None) == "—"
+def test_format_last_updated_none():
+    """Returns dash for empty input."""
+    assert format_last_updated("") == "—"
+    assert format_last_updated(None) == "—"
 
 
-# ── _build_row ────────────────────────────────────────────────────────────────
-
-
-def test_build_row_contains_name():
-    """Row includes repo name as a link."""
-    node = make_gql_node("reporium", stars=100)
-    row = _build_row(node, {}, None)
-    assert "reporium" in row
-
-
-def test_build_row_contains_stars():
-    """Row includes star count."""
-    node = make_gql_node("reporium", stars=100)
-    row = _build_row(node, {}, None)
-    assert "100" in row
-
-
-def test_build_row_demo_link():
-    """Row includes link when config has 'link'."""
-    node = make_gql_node("reporium")
-    row = _build_row(node, {"link": "https://reporium.com"}, None)
-    assert "reporium.com" in row
-
-
-def test_build_row_metrics():
-    """Row includes metrics string when provided."""
-    node = make_gql_node("reporium")
-    row = _build_row(node, {}, "repos_tracked: 805")
-    assert "805" in row
+def test_format_last_updated_future():
+    """Returns 'recently' for future dates."""
+    result = format_last_updated("2099-12-31T00:00:00Z")
+    assert result == "recently"
 
 
 # ── build_readme ──────────────────────────────────────────────────────────────
@@ -128,22 +104,33 @@ def test_build_row_metrics():
 
 def test_build_readme_has_header():
     """README contains the author header."""
-    readme = build_readme(["| row1 |"], "2026-03-17T05:00:00+00:00")
+    readme = build_readme({}, [], "Mar 17, 2026 05:00 UTC")
     assert "Kim Loza" in readme
 
 
-def test_build_readme_has_table_headers():
-    """README contains the project table headers."""
-    readme = build_readme([], "2026-03-17")
-    assert "| Project |" in readme
-    assert "| Stars |" in readme
+def test_build_readme_has_suite_structure():
+    """README with suite data contains suite headers."""
+    node = make_gql_node("reporium", stars=100)
+    cfg = {"suite": "Reporium", "group": "Core Platform", "order": 1}
+    suite_groups = {"Reporium": {"Core Platform": [(node, cfg, None)]}}
+    readme = build_readme(suite_groups, [], "Mar 17, 2026")
+    assert "## Reporium Suite" in readme
+    assert "### Core Platform" in readme
+    assert "reporium" in readme
 
 
-def test_build_readme_contains_rows():
-    """README includes the provided rows."""
-    rows = ["| [myrepo](url) | desc | 5 | 2026-03-01 | — | — |"]
-    readme = build_readme(rows, "2026-03-17")
-    assert "myrepo" in readme
+def test_build_readme_other_repos():
+    """README includes Other Projects section."""
+    node = make_gql_node("my-tool", stars=50)
+    readme = build_readme({}, [(node, {}, None)], "Mar 17, 2026")
+    assert "## Other Projects" in readme
+    assert "my-tool" in readme
+
+
+def test_build_readme_footer():
+    """README includes footer with date disclaimer."""
+    readme = build_readme({}, [], "Mar 17, 2026")
+    assert "Last Updated reflects" in readme
 
 
 # ── _graphql_repos (mocked) ───────────────────────────────────────────────────
@@ -151,7 +138,7 @@ def test_build_readme_contains_rows():
 
 @respx.mock
 async def test_graphql_repos_returns_non_forks():
-    """Fetches repos and returns raw nodes (fork filtering is via GraphQL isFork param)."""
+    """Fetches repos and returns raw nodes."""
     nodes = [make_gql_node("reporium"), make_gql_node("forksync")]
     payload = {"data": {"user": {"repositories": {"nodes": nodes}}}}
     respx.post(GRAPHQL_URL).mock(return_value=httpx.Response(200, json=payload))
