@@ -82,9 +82,9 @@
     "status": "active"
   },
   "reporium-events": {
-    "suite": "Perditio",
-    "group": "Shared Tooling",
-    "order": 2,
+    "suite": "Reporium",
+    "group": "Infrastructure",
+    "order": 1,
     "status": "active"
   },
   "reporium-scoring": {

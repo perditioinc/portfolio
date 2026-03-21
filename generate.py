@@ -59,6 +59,7 @@ GROUP_ORDER = {
     "Reporium": [
         "Core Platform",
         "Automation & Sync",
+        "Infrastructure",
         "Observability & Health",
         "Documentation & Discovery",
     ],
