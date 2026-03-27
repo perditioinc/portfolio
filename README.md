@@ -43,8 +43,8 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
-| [reporium-metrics](https://github.com/perditioinc/reporium-metrics) | Platform performance tracking over time — ASCII trend charts, nightly collection. | 1 | Python | Mar 25, 2026 |
-| [reporium-audit](https://github.com/perditioinc/reporium-audit) | Nightly automated audit of the entire Reporium platform — verified health checks | 1 | Python | Mar 25, 2026 |
+| [reporium-metrics](https://github.com/perditioinc/reporium-metrics) | Platform performance tracking over time — ASCII trend charts, nightly collection. | 1 | Python | Mar 26, 2026 |
+| [reporium-audit](https://github.com/perditioinc/reporium-audit) | Nightly automated audit of the entire Reporium platform — verified health checks | 1 | Python | Mar 26, 2026 |
 | [reporium-security](https://github.com/perditioinc/reporium-security) | Automated security scanning for the Reporium suite — grades every public repo A through F nightly | 1 | Python | Mar 21, 2026 |
 | [reporium-scoring](https://github.com/perditioinc/reporium-scoring) | Score any GitHub repo 0-100 for the Reporium platform — README quality, activity, community health, CI/CD | 1 | Python | Mar 21, 2026 |
 
@@ -52,8 +52,8 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
-| [reporium-dataset](https://github.com/perditioinc/reporium-dataset) | Public dataset mirror for reporium.com — nightly-updated AI dev tool stats from reporium-db. | 1 | Python | Mar 26, 2026 |
-| [reporium-roadmap](https://github.com/perditioinc/reporium-roadmap) | Public product roadmap for reporium.com — auto-updated nightly with live GitHub stats. | 1 | Python | Mar 25, 2026 |
+| [reporium-dataset](https://github.com/perditioinc/reporium-dataset) | Public dataset mirror for reporium.com — nightly-updated AI dev tool stats from reporium-db. | 1 | Python | Mar 27, 2026 |
+| [reporium-roadmap](https://github.com/perditioinc/reporium-roadmap) | Public product roadmap for reporium.com — auto-updated nightly with live GitHub stats. | 1 | Python | Mar 26, 2026 |
 | [reporium-system-design](https://github.com/perditioinc/reporium-system-design) | Architecture decisions, tradeoffs, CAP theorem analysis, and diagrams for the Reporium platform | 1 | Python | Mar 21, 2026 |
 
 ## Perditio Suite
@@ -73,8 +73,8 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
 | [reporium-mcp](https://github.com/perditioinc/reporium-mcp) | MCP server for Reporium — query your AI repo library from Claude | 1 | Python | Mar 24, 2026 |
-| [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 1 | Python | Mar 25, 2026 |
+| [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 1 | Python | Mar 26, 2026 |
 
 ---
 *Last Updated reflects the most recent push including automated nightly workflow runs.*
-*Generated at Mar 26, 2026 07:42 UTC from live GitHub data.*
+*Generated at Mar 27, 2026 07:42 UTC from live GitHub data.*
