@@ -31,6 +31,12 @@
     "order": 4,
     "status": "in_progress"
   },
+  "reporium-mcp": {
+    "suite": "Reporium",
+    "group": "Core Platform",
+    "order": 5,
+    "status": "active"
+  },
   "forksync": {
     "suite": "Reporium",
     "group": "Automation & Sync",
