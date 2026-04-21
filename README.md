@@ -53,7 +53,7 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
-| [reporium-dataset](https://github.com/perditioinc/reporium-dataset) | Public dataset mirror for reporium.com — nightly-updated AI dev tool stats from reporium-db. | 1 | Python | Apr 20, 2026 |
+| [reporium-dataset](https://github.com/perditioinc/reporium-dataset) | Public dataset mirror for reporium.com — nightly-updated AI dev tool stats from reporium-db. | 1 | Python | Apr 21, 2026 |
 | [reporium-roadmap](https://github.com/perditioinc/reporium-roadmap) | Public product roadmap for reporium.com — auto-updated nightly with live GitHub stats. | 1 | Python | Apr 20, 2026 |
 | [reporium-system-design](https://github.com/perditioinc/reporium-system-design) | Architecture decisions, tradeoffs, CAP theorem analysis, and diagrams for the Reporium platform | 1 | Python | Apr 16, 2026 |
 
@@ -73,9 +73,9 @@ Currently building the Reporium platform — a discovery and intelligence layer 
 
 | Repo | Description | Stars | Language | Last Updated |
 |------|------|------|------|------|
-| [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 2 | Python | Apr 16, 2026 |
+| [portfolio](https://github.com/perditioinc/portfolio) | Portfolio of AI discovery tools, developer tooling, and automation systems built by Kim Loza | 2 | Python | Apr 21, 2026 |
 | [reporium-trust-score](https://github.com/perditioinc/reporium-trust-score) | Hourly trust-score measurement for Reporium - composite of Reliability x Quality x Integrity x Freshness | 0 | Python | Apr 21, 2026 |
 
 ---
 *Last Updated reflects the most recent push including automated nightly workflow runs.*
-*Generated at Apr 21, 2026 07:49 UTC from live GitHub data.*
+*Generated at Apr 21, 2026 08:17 UTC from live GitHub data.*
