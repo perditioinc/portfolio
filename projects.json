@@ -98,5 +98,12 @@
     "group": "Observability & Health",
     "order": 4,
     "status": "active"
+  },
+  "reporium-trust-score": {
+    "suite": "Reporium",
+    "group": "Observability & Health",
+    "order": 5,
+    "status": "active",
+    "link": "https://github.com/perditioinc/reporium-trust-score"
   }
 }
